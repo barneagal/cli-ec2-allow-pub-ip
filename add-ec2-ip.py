@@ -25,7 +25,7 @@ class WhatIsMyIpRetriever():
 	    see http://www.whatismyip.com/faq/automation.asp
 	    '''
 	    headers = { 'User-Agent' : 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20100101 Firefox/12.0' }
-	    return urllib2.urlopen(urllib2.Request("http://automation.whatismyip.com/n09230945.asp", None, headers )).read()
+	    return urllib2.urlopen(urllib2.Request("http://checkip.amazonaws.com/", None, headers )).read()
 
 class AgentGatechIpRetriever():
 	def __str__( self ):
@@ -84,7 +84,7 @@ def createIpRange32(ip):
 ''' ~/.boto needed or read http://docs.pythonboto.org/en/latest/boto_config_tut.html '''
 def addIPSecurity(group, ports=22, dryRun=False):
     print "Args :: Group : ", group, ", TCP ports: ", ports
-    conn = boto.ec2.connect_to_region("eu-west-1")
+    conn = boto.ec2.connect_to_region("us-east-1")
     print "Connected to", conn
     sg = lookupSecurityGroupByName(conn, group)
     print "Targeted Security Group: ", sg.name
