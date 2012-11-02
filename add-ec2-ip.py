@@ -45,20 +45,29 @@ class DryRuleActivator():
 class DefaultRuleActivator():
     def __init__(self, securityGroup):
         self.securityGroup=securityGroup
+
     def authorize(self, pub_ip_range, tcpPort):
-        print "           AUTH   >> ",  pub_ip_range, ", TCP: ", tcpPort
         try:
-            res = self.securityGroup.authorize(ip_protocol='tcp', from_port=tcpPort, to_port=tcpPort, cidr_ip=pub_ip_range)
-            print "                  ",res
+            print "           AUTH-CHECK >> ",  pub_ip_range, ", TCP: ", tcpPort
+            found = False
+            for rule in self.securityGroup.rules:
+                for cidr_ip in rule.grants:
+                    if str(cidr_ip) == pub_ip_range and str(rule.from_port) == str(tcpPort) and str(rule.to_port) == str(tcpPort):
+                        print "           AUTH-SKIP  >> ",  pub_ip_range, ", TCP: ", tcpPort
+                        found = True
+            if not found:
+                print "           AUTH       >> ",  pub_ip_range, ", TCP: ", tcpPort
+                res = self.securityGroup.authorize(ip_protocol='tcp', from_port=tcpPort, to_port=tcpPort, cidr_ip=pub_ip_range)
+                print "           AUTH-RES   >> ",res
         except boto.exception.EC2ResponseError as e:
             print "EC2 error", e
             print "ERROR with ", pub_ip_range, tcpPort, "Press a key to ignore or CTRL+C"
             raw_input()
             
     def revoke(self, pub_ip_range, tcpPort):
-        print "           REVOKE  >> ",  pub_ip_range, ", TCP: ", tcpPort
+        print "           REVOKE       >> ",  pub_ip_range, ", TCP: ", tcpPort
         res = self.securityGroup.revoke('tcp', tcpPort, tcpPort, cidr_ip=pub_ip_range)
-        print "                  ",res
+        print "           REVOKE-RES   >> ",res
 
 def lookupSecurityGroupByName(conn, name):
     try:
@@ -93,8 +102,8 @@ def addIPSecurity(region, groups, dryRun=False):
         print "Targeted Security Group: ", sg.name
         instances = sg.instances()
         print len(instances) ,"instances will be affected"
-        publicIpRetriever = AgentGatechIpRetriever()
-        pub_ip = publicIpRetriever.retrievePublicIp()
+        publicIpRetriever = WhatIsMyIpRetriever()
+        pub_ip = publicIpRetriever.retrievePublicIp().strip()
         print "Current public IP:", pub_ip, "(retrieved by ",publicIpRetriever,")"
         pub_ip_range = createIpRange32(pub_ip)
         print len(sg.rules), "rules actually defined in", sg.name
