@@ -17,20 +17,20 @@ Public IP "providers" :
 
 class WhatIsMyIpRetriever():
     def __str__( self ):
-        return "http://checkip.amazonaws.com"
+        return "http://automation.whatismyip.com/n09230945.asp"
 
-    def retrievePublicIp(self): 
+    def retrievePublicIp(self):
         '''
         Includes setting the header to match the request
         see http://www.whatismyip.com/faq/automation.asp
         '''
         headers = { 'User-Agent' : 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20100101 Firefox/12.0' }
-        return urllib2.urlopen(urllib2.Request("http://checkip.amazonaws.com/", None, headers )).read()
+        return urllib2.urlopen(urllib2.Request("http://automation.whatismyip.com/n09230945.asp", None, headers )).read()
 
 class AgentGatechIpRetriever():
     def __str__( self ):
         return "http://agentgatech.appspot.com/"
-    def retrievePublicIp(self): 
+    def retrievePublicIp(self):
         headers = { 'User-Agent' : 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20100101 Firefox/12.0' }
         return urllib2.urlopen(urllib2.Request("http://agentgatech.appspot.com/", None, headers)).read()
 
@@ -63,7 +63,7 @@ class DefaultRuleActivator():
             print "EC2 error", e
             print "ERROR with ", pub_ip_range, tcpPort, "Press a key to ignore or CTRL+C"
             raw_input()
-            
+
     def revoke(self, pub_ip_range, tcpPort):
         print "           REVOKE       >> ",  pub_ip_range, ", TCP: ", tcpPort
         res = self.securityGroup.revoke('tcp', tcpPort, tcpPort, cidr_ip=pub_ip_range)
@@ -121,7 +121,7 @@ def addIPSecurity(region, groups, dryRun=False):
     print "=========== PRESS A KEY TO REVOKE RULES ================="
     print "========================================================="
     raw_input()
-   
+
     print "Duration:",datetime.now()-authTime
     for group in groups:
         for port in groups[group]:
