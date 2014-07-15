@@ -17,7 +17,7 @@ Public IP "providers" :
 
 class WhatIsMyIpRetriever():
     def __str__( self ):
-        return "http://automation.whatismyip.com/n09230945.asp"
+        return "http://checkip.amazonaws.com"
 
     def retrievePublicIp(self):
         '''
@@ -25,7 +25,7 @@ class WhatIsMyIpRetriever():
         see http://www.whatismyip.com/faq/automation.asp
         '''
         headers = { 'User-Agent' : 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20100101 Firefox/12.0' }
-        return urllib2.urlopen(urllib2.Request("http://automation.whatismyip.com/n09230945.asp", None, headers )).read()
+        return urllib2.urlopen(urllib2.Request("http://checkip.amazonaws.com", None, headers )).read()
 
 class AgentGatechIpRetriever():
     def __str__( self ):
